@@ -322,15 +322,15 @@ PostCode -- Postale
 		WHERE ID = <ClientID>
 
 
-000000 TRIGGER 000000
+=== TRIGGER ===
 
-/*После добавления, изменения, удаления записи*/
+002/*После добавления, изменения, удаления записи*/
 	UPDATE tblCarRUS SET [Sale] = '-1' 
 		WHERE ID = <tblFactureRUS>.<VoitureID>
-/*При удалении записи*/
+003/*При удалении записи*/
 	UPDATE tblCarRUS SET [Sale] = '0' 
 		WHERE ID = <tblFactureRUS>.<VoitureID>
-/*После добавления*/
+004/*После добавления*/
 	INSERT INTO tblFactureClient(FactureID, Client, PaysClient, CommuneClient, TypeDeVoieClient, AdresseClient, PreVATClient, NumberVATClient) 
 	 VALUES(<ID>, (SELECT Client FROM tblClient WHERE ID = <ClientID>), 
 				(SELECT Country FROM tblClient WHERE ID = <ClientID>), 
@@ -339,7 +339,7 @@ PostCode -- Postale
 				(SELECT Address FROM tblClient WHERE ID = <ClientID>), 
 				(SELECT PreVAT FROM tblClient WHERE ID = <ClientID>), 
 				(SELECT NumberVAT FROM tblClient WHERE ID = <ClientID>))
-/*При изменении записи*/
+005/*При изменении записи*/
 	UPDATE tblFactureClient
 	SET Client = (SELECT Client FROM tblClient WHERE ID = <ClientID>), 
 		PaysClient = (SELECT Country FROM tblClient WHERE ID = <ClientID>),  
@@ -349,25 +349,25 @@ PostCode -- Postale
 		PreVATClient = (SELECT PreVAT FROM tblClient WHERE ID = <ClientID>), 
 		NumberVATClient = (SELECT NumberVAT FROM tblClient WHERE ID = <ClientID>)
 	WHERE FactureID = <ID>
-/*После добавления*/ 
+006/*После добавления*/ 
 	Update tblFactureRUS SET NumFacture = (SELECT (COUNT(NumFacture)) 
 		FROM tblFactureRUS 
 		WHERE (MonthFac = <MonthFac>) AND (YearFac = <YearFac>)) Where ID = <ID>
-/*При изменении поля*/
+007/*При изменении поля*/
 	VoitureID
 	Update tblFactureRUS SET EXA = ' ' WHERE ID = <ID>
-/*После добавления, изменения, удаления записи*/
+008/*После добавления, изменения, удаления записи*/
 	<noVAT> = -1
 	Update tblFactureRUS SET EXA = ' ----- ' WHERE ID = <ID>
-/*После добавления, изменения, удаления записи*/
+009/*После добавления, изменения, удаления записи*/
 	UPDATE tblCarRUS SET FID = <ID> WHERE ID = <VoitureID>
-/*При удалении записи*/
+010/*При удалении записи*/
 	UPDATE tblCarRUS SET FID = 0 WHERE ID = <VoitureID>
-/*После добавления, изменения, удаления записи*/
+011/*После добавления, изменения, удаления записи*/
 	<ClientID> = 348
 	UPDATE tblCarTERO SET [Status] = 'Pret' 
 		WHERE CarRusID = <tblFactureRUS>.<VoitureID>
-/*После добавления, изменения, удаления записи*/
+012/*После добавления, изменения, удаления записи*/
 	<ClientID> = 352
 	UPDATE tblCarPATU SET [Status] = 'Pret' 
 		WHERE CarRusID = <tblFactureRUS>.<VoitureID>
@@ -441,18 +441,18 @@ DateAuction2 -- DateAuction2 - текстовый
 Notes -- Note - текстовый
 AddVendor -- Ajouter nouveau Fournisseur
 
-000000 TRIGGER 000000
+=== TRIGGER ===
 
-/*После добавления*/
+013/*После добавления*/
 	UPDATE tblCarRUS 
 		SET [Attestation] = '-1' 
 		WHERE ID = <tblAttestation>.<CarID>
-/*После добавления, изменения, удаления записи*/
+014/*После добавления, изменения, удаления записи*/
 	AddVendor = -1
 	INSERT INTO tblMain(Vendor, FullVendor, City, Address, NumberVAT) 
 	VALUES (<Auction>, <NameAuction>, <City>, <Address>, <NumberTVA>);
 	UPDATE tblAttestation SET AddVendor = 0 WHERE ID = <ID> 
-/*После добавления, изменения, удаления записи*/
+015/*После добавления, изменения, удаления записи*/
 	<AddVendor> = -1
 	UPDATE tblAttestation SET AddVendor = 0 WHERE ID = <ID>
 
@@ -497,17 +497,17 @@ YearProforma -- Annee - числовой
 	Right(<DateProforma>, 4) 
 PostCode -- Postale - text
 
-000000 TRIGGER 000000
-/* При удалении записи*/
+=== TRIGGER ===
+016/* При удалении записи*/
 	UPDATE tblCarRUS
 		SET [Proforma] = '0', [Reglement] = '' 
 		WHERE ID = (SELECT CarID 
 							FROM tblProformaCarRUS 
 							WHERE ProformaID = <tblProformaRUS>.<ID>)
-/*После добавления, изменения, удаления записи*/
+017/*После добавления, изменения, удаления записи*/
 	<Rest> = 0 AND <TotalPrice> > 0
 	UPDATE tblProformaRUS SET Status = 'Paye' WHERE ID = <ID>
-/*После добавления, изменения, удаления записи*/
+018/*После добавления, изменения, удаления записи*/
 	<Rest> <> 0 AND <PartPayOne> > 0
 	UPDATE tblProformaRUS SET Status = 'Partie Paye' WHERE ID = <ID>
 
@@ -537,28 +537,28 @@ ProformaNumber -- Proforma Numero - числовой
 	-
 	<tblProformaRUS>.<NumberProforma>
 
-000000 TRIGGER 000000
-/*При добавлении, изменении, удалении записи*/
+=== TRIGGER ===
+019/*При добавлении, изменении, удалении записи*/
 	UPDATE tblProformaRUS 
 		SET TotalPrice = (SELECT Sum(PriceCar) 
 							FROM tblProformaCarRUS 
 							WHERE ProformaID = <tblProformaRUS>.<ID>) 			
 		WHERE ID = <tblProformaRUS>.<ID>
-/*При добавлении, изменении, удалении записи*/
+020/*При добавлении, изменении, удалении записи*/
 	UPDATE tblProformaRUS 
 		SET Rest = ((SELECT Sum(PriceCar) 
 							FROM tblProformaCarRUS 
 							WHERE ProformaID = <tblProformaRUS>.<ID>)  - <tblProformaRUS>.<PartPayOne> - <tblProformaRUS>.<PartPayTwo> - <tblProformaRUS>.<PartPayThree>) 
 		WHERE ID = <tblProformaRUS>.<ID>
-/*После добавления, изменения, удаления записи*/
+021/*После добавления, изменения, удаления записи*/
 	UPDATE tblCarRUS
 		SET [Proforma] = '-1', [Reglement] = 'VIREMENT', [ProformaNum] = <ProformaNumber> 
 		WHERE ID = <tblProformaCarRUS>.<CarID>
-/*При удалении записи*/
+022/*При удалении записи*/
 	UPDATE tblCarRUS 
 		SET [Proforma] = '0', [Reglement] = ' ', [ProformaNum] = 0 
 		WHERE ID = <tblProformaCarRUS>.<CarID>
-/**При удалении записи - обновляет номер по порядку в Работах в наряде**/ vbScript
+023/**При удалении записи - обновляет номер по порядку в Работах в наряде**/ vbScript
 	Dim sCurrent
 	Dim sCountAll
 	Dim sValue
@@ -574,13 +574,13 @@ ProformaNumber -- Proforma Numero - числовой
 			sSql="UPDATE tblProformaCarRUS SET Ordinal = '" & sValue & "' WHERE Ordinal = " & sID & " AND ProformaID = <ProformaID>"
 			ExecuteSQL(sSql)
 		next
-/*После добавления записи*/
+024/*После добавления записи*/
 	<tblProformaRUS>.<ClientID> = 348
 	INSERT INTO tblCarTERO(Status, Vendor, DateAchat, Brand, Model, RegNumber, Vin, Date1, Price, noVAT, Bonus, VAT, CarRusID, Validate)
 	VALUES('non Pret', 'Sarl RUS', <tblProformaRUS>.<DateProforma>, <Marque>, <Modele>, <Numero>, <Vin>, 
 		(SELECT Date1 FROM tblCarRUS WHERE ID = <CarID>), <PriceCar>, (SELECT noVAT FROM tblCarRUS WHERE ID = <CarID>), 0, 
 		(SELECT ValueInfo FROM tblInfo WHERE ID = 4), <CarID>, 0)
-/*После добавления записи*/
+025/*После добавления записи*/
 	<tblProformaRUS>.<ClientID> = 352
 	INSERT INTO tblCarPATU(Status, Vendor, DateAchat, Brand, Model, RegNumber, Vin, Date1, Price, noVAT, Bonus, VAT, CarRusID, Validate)
 	VALUES('non Pret', 'Sarl RUS', <tblProformaRUS>.<DateProforma>, <Marque>, <Modele>, <Numero>, <Vin>, 
@@ -588,6 +588,8 @@ ProformaNumber -- Proforma Numero - числовой
 		(SELECT ValueInfo FROM tblInfo WHERE ID = 5), <CarID>, 0)
 
 
+
+=== template ===
 template - FACTURE
 '\\WDMYCLOUDRUS\Facture\' & [YearFac] & '\' & [MonthFac] & '-' & [NumFacture] & '#' & [RegNumber] & '-' & [Client] & '.docx'
 template - Declaration
