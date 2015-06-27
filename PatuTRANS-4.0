@@ -1,0 +1,371 @@
+текстовый text числовой int датаИвремя date числовойДроб. real даНет bit большойТекст text+
+
+tblCarPATU
+'VoiturePATU '
+
+ID -- VoitureID - числовой
+Vendor -- Fournisseur - текстовый
+	SELECT Vendor
+		FROM tblMain
+DateAchat -- Date de acheter - датаИвремя
+	-
+	Previous
+ProformaNum -- N Proforma - числовой
+Total --! preTotal - числовой
+	-
+	- 100 * Int((<Price> + <FraisVente>) / ( - 100)) + <Bonus>
+TotalTTC --! preTotalTTC
+	-
+	- 100 * Int((<Price> + <FraisVente>) * (1 + <VAT>) / ( - 100)) + <Bonus>
+Brand -- Marque - текстовый
+	SELECT Brand 
+		FROM tblBrandModel
+		GROUP BY Brand
+Model -- Denomination - текстовый
+	SELECT Model 
+		FROM tblBrandModel 
+		WHERE Brand = <Brand>
+RegNumber -- Immatricul. - текстовый
+Vin -- N de derie - текстовый
+Date1 -- Date de 1 - датаИвремя
+noVAT -- non TVA - даНет
+Price -- Prix Fournis.- числовойДроб
+PriceFull --! Prix Fournis.Full
+	(<Price> + <FraisVente>) * (1 + <VAT>)
+PriceFullHT --! Prix Fournis.Full HT
+	<Price> + <FraisVente>
+FraisVente -- Frais ventes - числовойДроб
+NoteCar -- Note - текстовый
+Bonus -- Bonus - числовой
+	SELECT ValueInfo 
+		FROM tblInfo 
+		WHERE ID = 8
+VAT -- VAT - числовойДроб
+	SELECT ValueInfo 
+		FROM tblInfo 
+		WHERE ID = 5
+Frais --! Frais - числовойДроб
+	-
+	IIf(<noVAT> = -1, ((<Total> - <Price>) / (1 + <VAT>)), NULL)
+FraisVAT --! Frais TVA - числовойДроб
+	-
+	IIf(<noVAT> = -1, (<Total> - <Price> - <Frais>), NULL)
+Sale -- VENDU - даНет
+BuyTTC -- Echete TTC - даНет
+Proforma -- Proforma - даНет
+Status -- Statut - текстовый
+FID -- FID
+CarRusID -- CarRusID
+Validate -- Valide
+Date1Year -- Date1Year
+	Right(<Date1>, 4)
+
+
+tblFacturePATU
+'FacturePATU'
+
+ID -- ID - числовой
+YearFac --! Annee - числовой
+	-
+	Right(<DateFacture>, 4)
+MonthFac --! Mois - числовой
+	-
+	Mid(<DateFacture>, 4, 2)
+NumFacture -- Num Facture - числовой
+	-
+	Previous+1
+ClientID -- ClientID - числовой
+	-
+	tblClient.ID	
+Client -- Client - текстовый
+VoitureID -- VoitureID - числовой
+	-
+	tblCarPATU.ID	
+RegNumber -- Immatricul. - текстовый	
+Brand -- Marque - текстовый
+EXA -- EXA - текстовый
+	-
+	'!!!' 'OK'
+PriceVendor --! Prix Fournis. - числовойДроб
+	IIf(<VATadd> = -1, ((SELECT PriceFull FROM tblCarPATU WHERE ID = <VoitureID>)), (SELECT PriceFullHT FROM tblCarPATU WHERE ID = <VoitureID>))
+Camion -- Camion - даНет
+CamionPrice --! CamionPrix - числовойДроб
+	IIf(<Camion> = -1, 
+		(SELECT ValueInfo 
+		FROM tblInfo 
+		WHERE ID = 9), 0)
+WNumVAT --! WNumVAT - числовой
+	IIf(<noVAT> = -1 OR <VATadd> = -1, (SELECT ValueInfo 
+		FROM tblInfo 
+		WHERE ID = 5) * 100, 0)
+MyPrice --! Prix - числовой
+	IIf(([Camion] = -1 OR [AddTotal] <> 0), 
+		(IIf(<noVAT> = -1, 
+			(<PriceVendor> - (SELECT FraisVente FROM tblCarPATU WHERE ID = <VoitureID>)), 
+			(IIf(<VATadd> = -1, 
+				(((SELECT TotalTTC 
+						FROM tblCarPATU 
+						WHERE ID = <VoitureID>) + <CamionPrice> + <AddTotal>) / (1 + (<WNumVAT> / 100))), 
+				((SELECT Total 
+						FROM tblCarPATU 
+						WHERE ID = <VoitureID>) + <CamionPrice> + <AddTotal>))))),
+		(IIf(<noVAT> = -1, (<PriceVendor> - (SELECT FraisVente FROM tblCarPATU WHERE ID = <VoitureID>)), (IIf(<VATadd> = -1, 
+				(((SELECT TotalTTC 
+						FROM tblCarPATU 
+						WHERE ID = <VoitureID>)) / (1 + (<WNumVAT> / 100))), 
+				((SELECT Total 
+						FROM tblCarPATU 
+						WHERE ID = <VoitureID>)))))))
+TotalFac --! Total. - числовой
+	IIf(([Camion] = -1 OR [AddTotal] <> 0), 
+		(IIf(<VATadd> = -1, ((SELECT TotalTTC 
+						FROM tblCarPATU 
+						WHERE ID = <VoitureID>) + <CamionPrice> + <AddTotal>), ((SELECT Total 
+						FROM tblCarPATU 
+						WHERE ID = <VoitureID>) + <CamionPrice> + <AddTotal>))), 
+		(IIf(<VATadd> = -1, ((SELECT TotalTTC 
+						FROM tblCarPATU 
+						WHERE ID = <VoitureID>)), ((SELECT Total 
+						FROM tblCarPATU 
+						WHERE ID = <VoitureID>)))))
+DateAchat -- Date de acheter - датаИвремя			
+Vendor -- Fournisseur - текстовый
+Model -- Denomination - текстовый
+DateFacture -- Date Facture - датаИвремя
+	-
+	CurrentDate
+SellOnGround -- Vendre morale - текстовый
+noVAT -- non TVA - даНет
+VATadd -- +TVA - даНет
+WFraisHT --! WFraisHT - текстовый
+	IIf(<noVAT> = -1, 'Islaidos be PVM :', NULL)
+WFraisAmount --! WFraisAmount - числовойДроб
+	IIf(([Camion] = -1 OR [AddTotal] <> 0), 
+	(IIf(<noVAT> = -1, (SELECT Frais 
+						FROM tblCarPATU 
+						WHERE ID = <VoitureID>) + (<CamionPrice> + <AddTotal>) / (1 + <WNumVAT> / 100), NULL)),
+	(IIf(<noVAT> = -1, (SELECT Frais 
+						FROM tblCarPATU 
+						WHERE ID = <VoitureID>), NULL)))
+WVATAmount --! WVATAmount - числовойДроб
+	IIf(([Camion] = -1 OR [AddTotal] <> 0), 
+	(IIf(<noVAT> = -1, (SELECT FraisVAT 
+						FROM tblCarPATU 
+						WHERE ID = <VoitureID>) + <CamionPrice> + <AddTotal> - (<CamionPrice> + <AddTotal>) / (1 + <WNumVAT> / 100), <TotalFac> - <MyPrice>)),
+	(IIf(<noVAT> = -1, (SELECT FraisVAT 
+						FROM tblCarPATU 
+						WHERE ID = <VoitureID>), <TotalFac> - <MyPrice>)))
+PreTotal --! PreTotal - числовойДроб
+	SELECT Total 
+						FROM tblCarPATU 
+						WHERE ID = <VoitureID>
+AddTotal -- Total ajouter
+PostCode --! Postale
+	SELECT PostCode FROM tblClient
+		WHERE ID = <ClientID>
+DateFac2 --! DateFac2 - текстовый
+	-
+	Right(<DateFacture>, 4) & '-' & Mid(<DateFacture>, 4, 2) & '-' & Left(<DateFacture>, 2)
+TotalLeft --! TotalLeft
+	(<TotalFac> \ 1000) * 1000
+TotalRight --! TotalLeft
+	<TotalFac> - <TotalLeft>
+TotalInLeft --! TotalInLeft
+	(SELECT NumPl FROM tblNumCountry WHERE Num = <TotalLeft>)
+TotalInRight --! TotalInRight
+	(SELECT NumPl FROM tblNumCountry WHERE Num = <TotalRight>)
+
+000000 TRIGGER 000000
+
+/*После добавления, изменения, удаления записи*/
+	UPDATE tblCarPATU SET [Sale] = '-1' 
+		WHERE ID = <tblFacturePATU>.<VoitureID>
+/*При удалении записи*/
+	UPDATE tblCarPATU SET [Sale] = '0' 
+		WHERE ID = <tblFacturePATU>.<VoitureID>
+/*После добавления*/
+	INSERT INTO tblFClientPATU(FactureID, ClientIn, Pays, Commune, Adresse, NumberVAT) 
+	 VALUES(<ID>, (SELECT Client FROM tblClient WHERE ID = <ClientID>), 
+				(SELECT CountryPL FROM tblCountry WHERE (Country = (SELECT Country FROM tblClient WHERE ID = <ClientID>))), 
+				(SELECT City FROM tblClient WHERE ID = <ClientID>), 
+				(SELECT StreetType FROM tblClient WHERE ID = <ClientID>) & ' ' & 
+				(SELECT Address FROM tblClient WHERE ID = <ClientID>), 
+				(SELECT NumVATLT FROM tblClient WHERE ID = <ClientID>))
+/*При изменении записи*/
+	UPDATE tblFClientPATU
+	SET ClientIn = (SELECT Client FROM tblClient WHERE ID = <ClientID>), 
+		Pays = (SELECT CountryPL FROM tblCountry WHERE (Country = (SELECT Country FROM tblClient WHERE ID = <ClientID>))),  
+		Commune = (SELECT City FROM tblClient WHERE ID = <ClientID>), 
+		Adresse = (SELECT StreetType FROM tblClient WHERE ID = <ClientID>) & ' ' & 
+				(SELECT Address FROM tblClient WHERE ID = <ClientID>), 
+		NumberVAT = (SELECT NumVATLT FROM tblClient WHERE ID = <ClientID>)
+	WHERE FactureID = <ID>
+/*При изменении поля*/
+	VoitureID
+	Update tblFacturePATU SET EXA = ' ' WHERE ID = <ID>
+/*После добавления, изменения, удаления записи*/
+	<noVAT> = -1
+	Update tblFacturePATU SET EXA = ' ----- ' WHERE ID = <ID>
+/*После добавления, изменения, удаления записи*/
+	UPDATE tblCarPATU SET FID = <ID> WHERE ID = <VoitureID>
+/*При удалении записи*/
+	UPDATE tblCarPATU SET FID = 0 WHERE ID = <VoitureID>
+
+		
+
+ 
+tblFClientPATU
+'Client facture PATU'
+
+ID -- ID - числовой
+ClientIn -- Client - текстовый
+Pays -- Pays - текстовый
+Commune -- Commune - текстовый
+Adresse -- Adresse - текстовый
+NumberVAT -- N TVA - числовойДроб
+FactureID -- FactureID - числовой
+
+
+
+tblProformaPATU
+'ProformaPATU'
+
+ID -- ID - числовой
+NumberProforma -- Numero - числовой
+	-
+	MAX + 1
+Status -- Statut - текстовый
+	-
+	IIf((<PartPayOne> = NULL OR <TotalPrice> = NULL), 'Non Paye')
+DateProforma -- Date - датаИвремя
+	-
+	CurrentDate
+ClientID -- ClientID - числовой
+	-
+	tblClient.ID
+Client -- Client - текстовый
+TotalPrice -- Total - числовойДроб
+PartPayOne -- Partie1 - числовойДроб
+PartPayTwo -- Partie2 - числовойДроб
+PartPayThree -- Partie3 - числовойДроб
+Rest -- Reste - числовойДроб
+	-
+	IIf(<TotalPrice> = NULL, 0, <TotalPrice> -  (<PartPayOne> + <PartPayTwo> + <PartPayThree>))
+Country -- Pays - текстовый
+City -- Commune - текстовый
+AddressType -- Type de Voie - текстовый
+Address -- Adresse - текстовый
+PreVAT -- pre TVA - текстовый
+NumberVAT -- N TVA - текстовый
+MonthProforma -- Mois - текстовый
+	-
+	Mid(<DateProforma>, 4, 2)
+DateProforma2 -- Date2 - текстовый
+	-
+	Right(<DateProforma>, 4) & '/' & Mid(<DateProforma>, 4, 2) & '/' & Left(<DateProforma>, 2)
+YearProforma -- Annee - числовой
+	-
+	Right(<DateProforma>, 4) 
+NumVATPL -- NumVATPL
+CountryPL --! CountryLT
+	(SELECT CountryPL FROM tblCountry WHERE (Country = (SELECT Country FROM tblClient WHERE ID = <ClientID>)))
+TotalInLeft --! TotalInLeft
+	(SELECT NumPl FROM tblNumCountry WHERE Num = ((<TotalPrice> \ 1000) * 1000))
+TotalInRight --! TotalInRight
+	(SELECT NumPl FROM tblNumCountry WHERE Num = (<TotalPrice> - ((<TotalPrice> \ 1000) * 1000)))
+PostCode -- Postale - text
+
+000000 TRIGGER 000000
+/* При удалении записи*/
+	UPDATE tblCarPATU
+		SET [Proforma] = '0', [Reglement] = '' 
+		WHERE ID = (SELECT CarID 
+							FROM tblProformaCarPATU 
+							WHERE ProformaID = <tblProformaPATU>.<ID>)
+/*После добавления, изменения, удаления записи*/
+	<Rest> = 0 AND <TotalPrice> > 0
+	UPDATE tblProformaPATU SET Status = 'Paye' WHERE ID = <ID>
+/*После добавления, изменения, удаления записи*/
+	<Rest> <> 0 AND <PartPayOne> > 0
+	UPDATE tblProformaPATU SET Status = 'Partie Paye' WHERE ID = <ID>
+
+
+
+
+tblProformaCarPATU
+'Voitures ProformaPATU'
+
+ID -- ID - числовой
+CarID -- CarID - числовой
+	-
+	tblCarPATU.ID
+Ordinal -- N - числовой
+	-
+	Previous+1
+Numero -- Immatricul. - текстовый
+Marque -- Marque - текстовый
+Modele -- Denomination - текстовый
+Vin -- N de derie - текстовый
+PriceCar -- preTotal - числовойДроб
+ProformaID -- ProformaID - числовой
+TotalExt -- TotalExt - числовойДроб
+	-
+	<PriceCar>
+ProformaNumber -- Proforma Numero - числовой
+	-
+	<tblProformaPATU>.<NumberProforma>
+BrandModel -- BrandModel - текстовый
+	<Marque> & ' ' & <Modele>
+Qty -- Qty - числовой
+Wp -- Wp - текстовый
+
+000000 TRIGGER 000000
+/*При добавлении, изменении, удалении записи*/
+	UPDATE tblProformaPATU 
+		SET TotalPrice = (SELECT Sum(PriceCar) 
+							FROM tblProformaCarPATU 
+							WHERE ProformaID = <tblProformaPATU>.<ID>) 			
+		WHERE ID = <tblProformaPATU>.<ID>
+/*При добавлении, изменении, удалении записи*/
+	UPDATE tblProformaPATU 
+		SET Rest = ((SELECT Sum(PriceCar) 
+							FROM tblProformaCarPATU 
+							WHERE ProformaID = <tblProformaPATU>.<ID>)  - <tblProformaPATU>.<PartPayOne> - <tblProformaPATU>.<PartPayTwo> - <tblProformaPATU>.<PartPayThree>) 
+		WHERE ID = <tblProformaPATU>.<ID>
+/*После добавления, изменения, удаления записи*/
+	UPDATE tblCarPATU
+		SET [Proforma] = '-1', [ProformaNum] = <ProformaNumber> 
+		WHERE ID = <tblProformaCarPATU>.<CarID>
+/*При удалении записи*/
+	UPDATE tblCarPATU 
+		SET [Proforma] = '0', [Reglement] = ' ', [ProformaNum] = 0 
+		WHERE ID = <tblProformaCarPATU>.<CarID>
+/*После добавления, изменения, удаления записи*/
+	UPDATE tblProformaPATU
+		SET TotalInLeft = (SELECT NumPl FROM tblNumCountry WHERE Num = (((SELECT Sum(PriceCar) 
+							FROM tblProformaCarPATU 
+							WHERE ProformaID = <tblProformaPATU>.<ID>) \ 1000) * 1000))
+		WHERE ID = <tblProformaPATU>.<ID>;
+	UPDATE tblProformaPATU
+		SET TotalInRight = (SELECT NumPl FROM tblNumCountry WHERE Num = ((SELECT Sum(PriceCar) 
+							FROM tblProformaCarPATU 
+							WHERE ProformaID = <tblProformaPATU>.<ID>) - (((SELECT Sum(PriceCar) 
+							FROM tblProformaCarPATU 
+							WHERE ProformaID = <tblProformaPATU>.<ID>) \ 1000) * 1000)))
+		WHERE ID = <tblProformaPATU>.<ID>
+/**При удалении записи - обновляет номер по порядку**/ vbScript
+	Dim sCurrent
+	Dim sCountAll
+	Dim sValue
+	Dim sSql
+	Dim sID
+	Dim sCountReplace
+		sCurrent=<Ordinal>
+		sCountAll=ExecuteSQL("SELECT COUNT(Ordinal) From tblProformaCarPATU Where ProformaID = <ProformaID>")
+		sCountReplace=sCountAll-sCurrent
+		For i=1 To sCountReplace
+			sValue="" + Cstr(sCurrent+i-1)
+			sID="" + Cstr(sCurrent+i)
+			sSql="UPDATE tblProformaCarPATU SET Ordinal = '" & sValue & "' WHERE Ordinal = " & sID & " AND ProformaID = <ProformaID>"
+			ExecuteSQL(sSql)
+		next
