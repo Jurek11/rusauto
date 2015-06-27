@@ -172,8 +172,8 @@ Date12 -- Date12
 BuyTTC -- Echete TTC - даНет
 FID -- FID
 
-000000 TRIGGER 000000
-/*После добавления, изменения, удаления записи*/
+=== TRIGGER ===
+001/*После добавления, изменения, удаления записи*/
 	<BuyTTC> = -1 OR <noVAT> = -1
 	UPDATE tblCarRUS SET [Attestation] = -1 WHERE ID = <ID>
 
