@@ -1,0 +1,602 @@
+текстовый text числовой int датаИвремя date числовойДроб. real даНет bit большойТекст text+
+
+tblInfo
+'Information'
+
+ID - int -- InfoID 
+Company - text -- Entreprise 
+NameInfo - text -- Nom
+ValueInfo - real -- Valuer 
+
+
+
+tblCountry
+'Pays'
+ID - int -- ID 
+Country - text -- Pays FR
+CountryLT - text -- Pays LT
+CountryPL - text -- Pays PL
+
+
+
+tblNumCountry
+'Numero'
+ID - int -- ID
+Num - int -- Num
+NumRus - text -- NumRus
+NumLt - text -- NumLt
+NumPl - text -- NumPl
+
+
+
+tblBrandModel
+'InfoMarqueModel'
+
+ID - int -- ID
+Brand - text -- Marque
+Model - text -- Denomanation
+
+
+
+tblMain
+'LeFournisseur'
+
+ID -- FornisID - int
+TypeVendor -- Type Fournisseur - text
+Vendor -- Fournisseur - text
+FullVendor -- Nom Fournisseur - текстовый
+City -- Commune - текстовый
+Address -- Adresse - текстовый
+NumberVAT -- N TVA - числовойДроб.
+Site -- Site - текстовый
+Login -- Login - текстовый
+Pass -- Passe - текстовый
+Commision -- Frais de vente - числовой
+PriceSite -- Prix site - текстовый
+BuyCars -- Total achat - числовой
+
+
+
+tblClient
+'Client'
+
+ID -- ClientID - числовой
+TypeClient -- Personne - текстовый
+Client -- Client - текстовый
+NumberClientID -- N ID Siren - текстовый
+Country -- Pays - текстовый
+	SELECT Country
+		FROM tblCountry
+PostCode -- Postale - текстовый
+City -- Commune - текстовый
+StreetType -- Type de Voie - текстовый
+Address -- Adresse - текстовый
+Phone -- TelePhone - текстовый
+Email -- E-mail - текстовый
+PreVAT -- pre TVA - текстовый
+NumberVAT -- N TVA - текстовый
+NumID2 -- IDNum2
+	Mid(<NumberClientID>, 1, 1) & 
+	'  ' & Mid(<NumberClientID>, 2, 1) & 
+	'  ' & Mid(<NumberClientID>, 3, 1) & 
+	'  ' & Mid(<NumberClientID>, 4, 1) & 
+	'  ' & Mid(<NumberClientID>, 5, 1) & 
+	'  ' & Mid(<NumberClientID>, 6, 1) & 
+	'  ' & Mid(<NumberClientID>, 7, 1) & 
+	'  ' & Mid(<NumberClientID>, 8, 1) & 
+	'  ' & Mid(<NumberClientID>, 9, 1)
+Pph2 -- Pph2
+	IIf(<TypeClient> = 'physique', 'V', NULL)
+Pmo2 -- Pmo2
+	IIf(<TypeClient> = 'morale', 'V', NULL)
+PostCode2 -- PostCode2
+	Mid(<PostCode>, 1, 1) & 
+	'   ' & Mid(<PostCode>, 2, 1) & 
+	'   ' & Mid(<PostCode>, 3, 1) & 
+	'   ' & Mid(<PostCode>, 4, 1) & 
+	'   ' & Mid(<PostCode>, 5, 1)
+AddTime -- Poste le - датаИвремя
+	CurrentDateTime
+NumVATLT -- NumVATLT
+	IIf(<NumberVAT> <> ' ', 'PVM kodas: '  & <PreVAT> & ' ' & <NumberVAT>)
+
+
+
+tblCarRUS
+'VoitureRUS'
+
+ID -- VoitureID - числовой
+Vendor -- Fournisseur - текстовый
+	SELECT Vendor
+		FROM tblMain
+DateAchat -- Date de acheter - датаИвремя
+	-
+	Previous
+ProformaNum -- N Proforma - числовой
+Total -- preTotal - числовой
+	-
+	- 100 * Int((<Price> + <FraisVente>) / ( - 100)) + <Bonus>
+TotalTTC -- preTotalTTC
+	-
+	- 100 * Int((<Price> + <FraisVente>) * (1 + <VAT>) / ( - 100)) + <Bonus>
+Brand -- Marque - текстовый
+	SELECT Brand 
+		FROM tblBrandModel
+		GROUP BY Brand
+Model -- Denomination - текстовый
+	SELECT Model 
+		FROM tblBrandModel 
+		WHERE Brand = <Brand>
+RegNumber -- Immatricul. - текстовый
+Genre -- Genre - текстовый
+TypeDate -- TypeDate - текстовый
+Type1 -- Type, Date 1MEC - текстовый
+Vin -- N de derie - текстовый
+Date1 -- Date de 1 - датаИвремя
+noVAT -- non TVA - даНет
+Price -- Prix Fournis.- числовойДроб
+PriceFull -- Prix Fournis.Full
+	(<Price> + <FraisVente>) * (1 + <VAT>)
+PriceFullHT -- Prix Fournis.Full HT
+	<Price> + <FraisVente>
+FraisVente -- Frais ventes - числовойДроб
+NoteCar -- Note - текстовый
+KM -- .          Km - текстовый
+Bonus -- Bonus - числовой
+	SELECT ValueInfo 
+		FROM tblInfo 
+		WHERE ID = 2
+VAT -- VAT - числовойДроб
+	SELECT ValueInfo 
+		FROM tblInfo 
+		WHERE ID = 1
+Frais -- Frais - числовойДроб
+	-
+	IIf(<noVAT> = -1, ((<Total> - <Price>) / (1 + <VAT>)), NULL)
+FraisVAT -- Frais TVA - числовойДроб
+	-
+	IIf(<noVAT> = -1, (<Total> - <Price> - <Frais>), NULL)
+Reglement -- Reglement - текстовый
+Attestation -- Attestation - даНет
+Proforma -- Proforma - даНет
+Sale -- VENDU - даНет
+Date12 -- Date12
+	Mid(<Date1>, 1, 1) & 
+	'    ' & Mid(<Date1>, 2, 1) & 
+	'     ' & Mid(<Date1>, 4, 1) & 
+	'    ' & Mid(<Date1>, 5, 1) & 
+	'     ' & Mid(<Date1>, 7, 1) & 
+	'     ' & Mid(<Date1>, 8, 1) & 
+	'   ' & Mid(<Date1>, 9, 1) & 
+	'     ' & Mid(<Date1>, 10, 1)
+BuyTTC -- Echete TTC - даНет
+FID -- FID
+
+000000 TRIGGER 000000
+/*После добавления, изменения, удаления записи*/
+	<BuyTTC> = -1 OR <noVAT> = -1
+	UPDATE tblCarRUS SET [Attestation] = -1 WHERE ID = <ID>
+
+
+tblFactureRUS
+'FactureRUS'
+
+ID -- ID - числовой
+YearFac -- Annee - числовой
+	-
+	Right(<DateFacture>, 4)
+MonthFac -- Mois - числовой
+	-
+	Mid(<DateFacture>, 4, 2)
+NumFacture -- Num Facture - числовой
+	-
+	Previous+1
+ClientID -- ClientID - числовой
+	-
+	tblClient.ID	
+Client -- Client - текстовый
+VoitureID -- VoitureID - числовой
+	-
+	tblCarRUS.ID	
+RegNumber -- Immatricul. - текстовый	
+Brand -- Marque - текстовый
+EXA -- EXA - текстовый
+	-
+	'!!!' 'OK'
+PriceVendor --! Prix Fournis. - числовойДроб
+	IIf(<VATadd> = -1, ((SELECT PriceFull FROM tblCarRUS WHERE ID = <VoitureID>)), (SELECT PriceFullHT FROM tblCarRUS WHERE ID = <VoitureID>))
+Reglement -- Reglement - текстовый
+Camion -- Camion - даНет
+CamionPrice -- CamionPrix - числовойДроб
+	IIf(<Camion> = -1, 
+		(SELECT ValueInfo 
+		FROM tblInfo 
+		WHERE ID = 3), 0)
+WNumVAT -- WNumVAT - числовой
+	IIf(<noVAT> = -1 OR <VATadd> = -1, (SELECT ValueInfo 
+		FROM tblInfo 
+		WHERE ID = 1) * 100, 0)
+MyPrice -- Prix - числовой
+	IIf(([Camion] = -1 OR [AddTotal] <> 0), 
+		(IIf(<noVAT> = -1, 
+			(<PriceVendor> - (SELECT FraisVente FROM tblCarRUS WHERE ID = <VoitureID>)), 
+			(IIf(<VATadd> = -1, 
+				(((SELECT TotalTTC 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>) + <CamionPrice> + <AddTotal>) / (1 + (<WNumVAT> / 100))), 
+				((SELECT Total 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>) + <CamionPrice> + <AddTotal>))))),
+		(IIf(<noVAT> = -1, (<PriceVendor> - (SELECT FraisVente FROM tblCarRUS WHERE ID = <VoitureID>)), (IIf(<VATadd> = -1, 
+				(((SELECT TotalTTC 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>)) / (1 + (<WNumVAT> / 100))), 
+				((SELECT Total 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>)))))))
+TotalFac -- Total. - числовой
+	IIf(([Camion] = -1 OR [AddTotal] <> 0), 
+		(IIf(<VATadd> = -1, ((SELECT TotalTTC 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>) + <CamionPrice> + <AddTotal>), ((SELECT Total 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>) + <CamionPrice> + <AddTotal>))), 
+		(IIf(<VATadd> = -1, ((SELECT TotalTTC 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>)), ((SELECT Total 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>)))))
+DateAchat -- Date de acheter - датаИвремя			
+Vendor -- Fournisseur - текстовый
+DateDeclar -- Date declaration - датаИвремя
+	-
+	Previous
+THour -- HH - текстовый
+TMin -- mm - текстовый
+Model -- Denomination - текстовый
+DateFacture -- Date Facture - датаИвремя
+	-
+	CurrentDate
+SellOnGround -- Vendre morale - текстовый
+noVAT -- non TVA - даНет
+VATadd -- +TVA - даНет
+WPrix -- WPrix - текстовый
+	IIf(<noVAT> = -1, 'TTC', 'HT')
+WFraisHT -- WFraisHT - текстовый
+	IIf(<noVAT> = -1, 'Frais HT :', NULL)
+WFrais -- WFrais - текстовый
+	IIf(<noVAT> = -1, 'Frais', NULL)
+WFraisAmount -- WFraisAmount - числовойДроб
+	IIf(([Camion] = -1 OR [AddTotal] <> 0), 
+	(IIf(<noVAT> = -1, (SELECT Frais 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>) + (<CamionPrice> + <AddTotal>) / (1 + <WNumVAT> / 100), NULL)),
+	(IIf(<noVAT> = -1, (SELECT Frais 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>), NULL)))
+WVATAmount -- WVATAmount - числовойДроб
+	IIf(([Camion] = -1 OR [AddTotal] <> 0), 
+	(IIf(<noVAT> = -1, (SELECT FraisVAT 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>) + <CamionPrice> + <AddTotal> - (<CamionPrice> + <AddTotal>) / (1 + <WNumVAT> / 100), <TotalFac> - <MyPrice>)),
+	(IIf(<noVAT> = -1, (SELECT FraisVAT 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>), <TotalFac> - <MyPrice>)))
+WTotal -- WTotal - текстовый
+	IIf(<noVAT> = -1 OR <VATadd> = -1, 'TTC', 'HT')
+PreTotal -- PreTotal - числовойДроб
+	SELECT Total 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>
+DateDeclar2 -- DateDeclar2 - текстовый
+	' ' & Mid(<DateDeclar>, 1, 1) & 
+	'   ' & Mid(<DateDeclar>, 2, 1) & 
+	'     ' & Mid(<DateDeclar>, 4, 1) &
+	'    ' & Mid(<DateDeclar>, 5, 1) &
+	'     ' & Mid(<DateDeclar>, 7, 1) &
+	'   ' & Mid(<DateDeclar>, 8, 1) &
+	'   ' & Mid(<DateDeclar>, 9, 1) &
+	'   ' & Mid(<DateDeclar>, 10, 1)
+TimeDeclar2 -- TimeDeclar2
+	Mid(<THour>, 1, 1) & 
+	'   ' & Mid(<THour>, 2, 1) & 
+	'   ' & Mid(<TMin>, 1, 1) & 
+	'   ' & Mid(<TMin>, 2, 1)
+NumID2 -- NumID2
+	IIf((SELECT TypeClient FROM tblClient 
+		WHERE ID = <ClientID>) = 'morale', (SELECT NumID2 FROM tblClient 
+		WHERE ID = <ClientID>), NULL)
+Pph2 -- Pph2
+	SELECT Pph2 FROM tblClient
+		WHERE ID = <ClientID>
+Pmo2 -- Pmo2
+	SELECT Pmo2 FROM tblClient
+		WHERE ID = <ClientID>
+PostCode2 -- PostCode2
+	SELECT PostCode2 FROM tblClient
+		WHERE ID = <ClientID>
+TypeStr -- Type de Voie
+AddTotal -- Total ajouter
+PostCode -- Postale
+	SELECT PostCode FROM tblClient
+		WHERE ID = <ClientID>
+
+
+000000 TRIGGER 000000
+
+/*После добавления, изменения, удаления записи*/
+	UPDATE tblCarRUS SET [Sale] = '-1' 
+		WHERE ID = <tblFactureRUS>.<VoitureID>
+/*При удалении записи*/
+	UPDATE tblCarRUS SET [Sale] = '0' 
+		WHERE ID = <tblFactureRUS>.<VoitureID>
+/*После добавления*/
+	INSERT INTO tblFactureClient(FactureID, Client, PaysClient, CommuneClient, TypeDeVoieClient, AdresseClient, PreVATClient, NumberVATClient) 
+	 VALUES(<ID>, (SELECT Client FROM tblClient WHERE ID = <ClientID>), 
+				(SELECT Country FROM tblClient WHERE ID = <ClientID>), 
+				(SELECT City FROM tblClient WHERE ID = <ClientID>), 
+				(SELECT StreetType FROM tblClient WHERE ID = <ClientID>), 
+				(SELECT Address FROM tblClient WHERE ID = <ClientID>), 
+				(SELECT PreVAT FROM tblClient WHERE ID = <ClientID>), 
+				(SELECT NumberVAT FROM tblClient WHERE ID = <ClientID>))
+/*При изменении записи*/
+	UPDATE tblFactureClient
+	SET Client = (SELECT Client FROM tblClient WHERE ID = <ClientID>), 
+		PaysClient = (SELECT Country FROM tblClient WHERE ID = <ClientID>),  
+		CommuneClient = (SELECT City FROM tblClient WHERE ID = <ClientID>), 
+		TypeDeVoieClient = (SELECT StreetType FROM tblClient WHERE ID = <ClientID>), 
+		AdresseClient = (SELECT Address FROM tblClient WHERE ID = <ClientID>), 
+		PreVATClient = (SELECT PreVAT FROM tblClient WHERE ID = <ClientID>), 
+		NumberVATClient = (SELECT NumberVAT FROM tblClient WHERE ID = <ClientID>)
+	WHERE FactureID = <ID>
+/*После добавления*/ 
+	Update tblFactureRUS SET NumFacture = (SELECT (COUNT(NumFacture)) 
+		FROM tblFactureRUS 
+		WHERE (MonthFac = <MonthFac>) AND (YearFac = <YearFac>)) Where ID = <ID>
+/*При изменении поля*/
+	VoitureID
+	Update tblFactureRUS SET EXA = ' ' WHERE ID = <ID>
+/*После добавления, изменения, удаления записи*/
+	<noVAT> = -1
+	Update tblFactureRUS SET EXA = ' ----- ' WHERE ID = <ID>
+/*После добавления, изменения, удаления записи*/
+	UPDATE tblCarRUS SET FID = <ID> WHERE ID = <VoitureID>
+/*При удалении записи*/
+	UPDATE tblCarRUS SET FID = 0 WHERE ID = <VoitureID>
+/*После добавления, изменения, удаления записи*/
+	<ClientID> = 348
+	UPDATE tblCarTERO SET [Status] = 'Pret' 
+		WHERE CarRusID = <tblFactureRUS>.<VoitureID>
+/*После добавления, изменения, удаления записи*/
+	<ClientID> = 352
+	UPDATE tblCarPATU SET [Status] = 'Pret' 
+		WHERE CarRusID = <tblFactureRUS>.<VoitureID>
+		
+
+
+tblFactureClient
+'Client facture'
+
+ID -- ID - числовой
+Client -- Client - текстовый
+PaysClient -- Pays - текстовый
+PostCode -- Postale - текстовый
+CommuneClient -- Commune - текстовый
+TypeDeVoieClient -- Type de Voie - текстовый
+AdresseClient -- Adresse - текстовый
+PreVATClient -- pre TVA - текстовый
+NumberVATClient -- N TVA - числовойДроб
+FactureID -- FactureID - числовой
+
+
+
+tblAttestation
+'ATTESTATION'
+
+ID -- ID - числовой
+NumberAtt -- Numero attestation - числовой
+Auction -- Fournisseur - текстовый
+DateAuction -- Date de acheter - датаИвремя
+CarID -- CarID - числовой
+	-
+	tblCarRUS.ID
+NumberCar -- Immatricul. - текстовый
+BrandCar -- Marque - текстовый
+Amount -- Prix Fournis. - числовойДроб
+AmountTVA -- Montant TVA - числовойДроб
+	-
+	<Amount> * 0.2
+DateAtt -- Date attestation - датаИвремя
+	-
+	CurrentDate
+Address -- Adresse - текстовый
+	SELECT Address 
+		FROM tblMain 
+		WHERE Vendor = <tblAttestation>.<Auction>
+City -- Commune - текстовый
+	SELECT City 
+		FROM tblMain 
+		WHERE Vendor = <tblAttestation>.<Auction>
+NumberTVA -- TVA numero - текстовый
+	SELECT NumberVAT 
+		FROM tblMain 
+		WHERE Vendor = <tblAttestation>.<Auction>
+TypeFacture -- Type achat - текстовый
+NumberFacture -- Numero achat - текстовый
+	-
+	Previous
+NameAuction -- Auction nom - текстовый
+	SELECT FullVendor 
+		FROM tblMain 
+		WHERE Vendor = <tblAttestation>.<Auction>
+MonthAtt -- Mois - числовой
+	-
+	mid(<DateAtt>, 4, 2)
+DateAtt2 -- DateAtt2 - текстовый
+	-
+	Left(<DateAtt>, 2) & '/' & Mid(<DateAtt>, 4, 2) & '/' & Right(<DateAtt>, 4)
+DateAuction2 -- DateAuction2 - текстовый
+	-
+	Left(<DateAuction>, 2) & '/' & Mid(<DateAuction>, 4, 2) & '/' & Right(<DateAuction>, 4)
+Notes -- Note - текстовый
+AddVendor -- Ajouter nouveau Fournisseur
+
+000000 TRIGGER 000000
+
+/*После добавления*/
+	UPDATE tblCarRUS 
+		SET [Attestation] = '-1' 
+		WHERE ID = <tblAttestation>.<CarID>
+/*После добавления, изменения, удаления записи*/
+	AddVendor = -1
+	INSERT INTO tblMain(Vendor, FullVendor, City, Address, NumberVAT) 
+	VALUES (<Auction>, <NameAuction>, <City>, <Address>, <NumberTVA>);
+	UPDATE tblAttestation SET AddVendor = 0 WHERE ID = <ID> 
+/*После добавления, изменения, удаления записи*/
+	<AddVendor> = -1
+	UPDATE tblAttestation SET AddVendor = 0 WHERE ID = <ID>
+
+tblProformaRUS
+'ProformaRUS'
+
+ID -- ID - числовой
+NumberProforma -- Numero - числовой
+	-
+	MAX + 1
+Status -- Statut - текстовый
+	-
+	IIf((<PartPayOne> = NULL OR <TotalPrice> = NULL), 'Non Paye')
+DateProforma -- Date - датаИвремя
+	-
+	CurrentDate
+ClientID -- ClientID - числовой
+	-
+	tblClient.ID
+Client -- Client - текстовый
+TotalPrice -- Total - числовойДроб
+PartPayOne -- Partie1 - числовойДроб
+PartPayTwo -- Partie2 - числовойДроб
+PartPayThree -- Partie3 - числовойДроб
+Rest -- Reste - числовойДроб
+	-
+	IIf(<TotalPrice> = NULL, 0, <TotalPrice> -  (<PartPayOne> + <PartPayTwo> + <PartPayThree>))
+Country -- Pays - текстовый
+City -- Commune - текстовый
+AddressType -- Type de Voie - текстовый
+Address -- Adresse - текстовый
+PreVAT -- pre TVA - текстовый
+NumberVAT -- N TVA - текстовый
+MonthProforma -- Mois - текстовый
+	-
+	Mid(<DateProforma>, 4, 2)
+DateProforma2 -- Date2 - текстовый
+	-
+	Left(<DateProforma>, 2) & '/' & Mid(<DateProforma>, 4, 2) & '/' & Right(<DateProforma>, 4)
+YearProforma -- Annee - числовой
+	-
+	Right(<DateProforma>, 4) 
+PostCode -- Postale - text
+
+000000 TRIGGER 000000
+/* При удалении записи*/
+	UPDATE tblCarRUS
+		SET [Proforma] = '0', [Reglement] = '' 
+		WHERE ID = (SELECT CarID 
+							FROM tblProformaCarRUS 
+							WHERE ProformaID = <tblProformaRUS>.<ID>)
+/*После добавления, изменения, удаления записи*/
+	<Rest> = 0 AND <TotalPrice> > 0
+	UPDATE tblProformaRUS SET Status = 'Paye' WHERE ID = <ID>
+/*После добавления, изменения, удаления записи*/
+	<Rest> <> 0 AND <PartPayOne> > 0
+	UPDATE tblProformaRUS SET Status = 'Partie Paye' WHERE ID = <ID>
+
+
+
+
+tblProformaCarRUS
+'Voitures ProformaRUS'
+
+ID -- ID - числовой
+CarID -- CarID - числовой
+	-
+	tblCarRUS.ID
+Ordinal -- N - числовой
+	-
+	Previous+1
+Numero -- Immatricul. - текстовый
+Marque -- Marque - текстовый
+Modele -- Denomination - текстовый
+Vin -- N de derie - текстовый
+PriceCar -- preTotal - числовойДроб
+ProformaID -- ProformaID - числовой
+TotalExt -- TotalExt - числовойДроб
+	-
+	<PriceCar>
+ProformaNumber -- Proforma Numero - числовой
+	-
+	<tblProformaRUS>.<NumberProforma>
+
+000000 TRIGGER 000000
+/*При добавлении, изменении, удалении записи*/
+	UPDATE tblProformaRUS 
+		SET TotalPrice = (SELECT Sum(PriceCar) 
+							FROM tblProformaCarRUS 
+							WHERE ProformaID = <tblProformaRUS>.<ID>) 			
+		WHERE ID = <tblProformaRUS>.<ID>
+/*При добавлении, изменении, удалении записи*/
+	UPDATE tblProformaRUS 
+		SET Rest = ((SELECT Sum(PriceCar) 
+							FROM tblProformaCarRUS 
+							WHERE ProformaID = <tblProformaRUS>.<ID>)  - <tblProformaRUS>.<PartPayOne> - <tblProformaRUS>.<PartPayTwo> - <tblProformaRUS>.<PartPayThree>) 
+		WHERE ID = <tblProformaRUS>.<ID>
+/*После добавления, изменения, удаления записи*/
+	UPDATE tblCarRUS
+		SET [Proforma] = '-1', [Reglement] = 'VIREMENT', [ProformaNum] = <ProformaNumber> 
+		WHERE ID = <tblProformaCarRUS>.<CarID>
+/*При удалении записи*/
+	UPDATE tblCarRUS 
+		SET [Proforma] = '0', [Reglement] = ' ', [ProformaNum] = 0 
+		WHERE ID = <tblProformaCarRUS>.<CarID>
+/**При удалении записи - обновляет номер по порядку в Работах в наряде**/ vbScript
+	Dim sCurrent
+	Dim sCountAll
+	Dim sValue
+	Dim sSql
+	Dim sID
+	Dim sCountReplace
+		sCurrent=<Ordinal>
+		sCountAll=ExecuteSQL("SELECT COUNT(Ordinal) From tblProformaCarRUS Where ProformaID = <ProformaID>")
+		sCountReplace=sCountAll-sCurrent
+		For i=1 To sCountReplace
+			sValue="" + Cstr(sCurrent+i-1)
+			sID="" + Cstr(sCurrent+i)
+			sSql="UPDATE tblProformaCarRUS SET Ordinal = '" & sValue & "' WHERE Ordinal = " & sID & " AND ProformaID = <ProformaID>"
+			ExecuteSQL(sSql)
+		next
+/*После добавления записи*/
+	<tblProformaRUS>.<ClientID> = 348
+	INSERT INTO tblCarTERO(Status, Vendor, DateAchat, Brand, Model, RegNumber, Vin, Date1, Price, noVAT, Bonus, VAT, CarRusID, Validate)
+	VALUES('non Pret', 'Sarl RUS', <tblProformaRUS>.<DateProforma>, <Marque>, <Modele>, <Numero>, <Vin>, 
+		(SELECT Date1 FROM tblCarRUS WHERE ID = <CarID>), <PriceCar>, (SELECT noVAT FROM tblCarRUS WHERE ID = <CarID>), 0, 
+		(SELECT ValueInfo FROM tblInfo WHERE ID = 4), <CarID>, 0)
+/*После добавления записи*/
+	<tblProformaRUS>.<ClientID> = 352
+	INSERT INTO tblCarPATU(Status, Vendor, DateAchat, Brand, Model, RegNumber, Vin, Date1, Price, noVAT, Bonus, VAT, CarRusID, Validate)
+	VALUES('non Pret', 'Sarl RUS', <tblProformaRUS>.<DateProforma>, <Marque>, <Modele>, <Numero>, <Vin>, 
+		(SELECT Date1 FROM tblCarRUS WHERE ID = <CarID>), <PriceCar>, (SELECT noVAT FROM tblCarRUS WHERE ID = <CarID>), 0, 
+		(SELECT ValueInfo FROM tblInfo WHERE ID = 5), <CarID>, 0)
+
+
+template - FACTURE
+'\\WDMYCLOUDRUS\Facture\' & [YearFac] & '\' & [MonthFac] & '-' & [NumFacture] & '#' & [RegNumber] & '-' & [Client] & '.docx'
+template - Declaration
+'\\WDMYCLOUDRUS\Facture\Declar-' & [YearFac] & '\' & [MonthFac] & '-' & [NumFacture] & '#' & [RegNumber] & '-' & [Client] & '.docx'
+template - Contravention
+'\\WDMYCLOUDRUS\Document\contravention\Contravention-' & [Client] & '-' & [RegNumber] & '.docx'
+template - Invitation
+'\\WDMYCLOUDRUS\Document\invitation\Invitation-' & [Client] & '.docx'
+template - Attestation
+'\\WDMYCLOUDRUS\Attestation\2015\Att-sign '& [NumberAtt] & ' ' & [Auction] & '.doc'
+template - Proforma
+'\\WDMYCLOUDRUS\Proforma\PROFORMA-'& [NumberProforma] & ' ' & [Client] & '.docx'
