@@ -320,7 +320,9 @@ AddTotal -- Total ajouter
 PostCode -- Postale
 	SELECT PostCode FROM tblClient
 		WHERE ID = <ClientID>
-
+WnoVAT -- .. - text
+	-D-!-
+	IIf(<noVAT>=-1, 'NON TVA', NULL)
 
 === TRIGGER ===
 
