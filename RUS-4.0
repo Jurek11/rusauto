@@ -255,9 +255,14 @@ THour -- HH - текстовый
 TMin -- mm - текстовый
 Model -- Denomination - текстовый
 DateFacture -- Date Facture - датаИвремя
-	-
+	-D-
 	CurrentDate
 SellOnGround -- Vendre morale - текстовый
+	-D-!-
+	IIf(((<noVAT>=-1) AND (<Pmo2> = 'V')), 
+		'Il ne sera delivre aucun document faisant ressortir le TVA (ART 297 du CGI).', 
+		(IIf(((<noVAT>=0) AND (<Pmo2> = 'V')), 
+			('Exoneration de TVA en vertu de  l article 262 ter I du CGI.'), NULL)))
 noVAT -- non TVA - даНет
 VATadd -- +TVA - даНет
 WPrix -- WPrix - текстовый
