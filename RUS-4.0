@@ -171,6 +171,8 @@ Date12 -- Date12
 	'     ' & Mid(<Date1>, 10, 1)
 BuyTTC -- Echete TTC - даНет
 FID -- FID
+AddPrice -- Total ajouter
+ClientID -- ClientID
 
 === TRIGGER ===
 001/*После добавления, изменения, удаления записи*/
@@ -195,6 +197,8 @@ ClientID -- ClientID - числовой
 	-
 	tblClient.ID	
 Client -- Client - текстовый
+	-D-!-
+	SELECT Client FROM tblClient WHERE ID = <ClientID>
 VoitureID -- VoitureID - числовой
 	-
 	tblCarRUS.ID	
@@ -321,6 +325,8 @@ PostCode2 -- PostCode2
 	SELECT PostCode2 FROM tblClient
 		WHERE ID = <ClientID>
 TypeStr -- Type de Voie
+	-D-!-
+	SELECT StreetType FROM tblClient WHERE ID = <ClientID>
 AddTotal -- Total ajouter
 PostCode -- Postale
 	SELECT PostCode FROM tblClient
@@ -539,10 +545,14 @@ PriceCar -- preTotal - числовойДроб
 ProformaID -- ProformaID - числовой
 TotalExt -- TotalExt - числовойДроб
 	-
-	<PriceCar>
+	SELECT Total FROM tblCarRUS WHERE ID = <CarID>
 ProformaNumber -- Proforma Numero - числовой
 	-
 	<tblProformaRUS>.<NumberProforma>
+AddPrice -- AddPrice
+	-D-!-
+	<PriceCar> - <TotalExt>
+
 
 === TRIGGER ===
 019/*При добавлении, изменении, удалении записи*/
@@ -593,7 +603,14 @@ ProformaNumber -- Proforma Numero - числовой
 	VALUES('non Pret', 'Sarl RUS', <tblProformaRUS>.<DateProforma>, <Marque>, <Modele>, <Numero>, <Vin>, 
 		(SELECT Date1 FROM tblCarRUS WHERE ID = <CarID>), <PriceCar>, (SELECT noVAT FROM tblCarRUS WHERE ID = <CarID>), 0, 
 		(SELECT ValueInfo FROM tblInfo WHERE ID = 5), <CarID>, 0)
-
+026/*После добавления, изменения, удаления записи*/
+	UPDATE tblCarRUS
+		SET AddPrice = <AddPrice>, ClientID = (SELECT ClientID FROM tblProformaRUS WHERE ID = <ProformaID>)
+		WHERE ID = <tblProformaCarRUS>.<CarID>
+027/*При удалении записи*/
+	UPDATE tblCarRUS
+		SET AddPrice = 0,  ClientID = 0
+		WHERE ID = <tblProformaCarRUS>.<CarID>
 
 
 === template ===
