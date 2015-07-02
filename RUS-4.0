@@ -171,8 +171,10 @@ Date12 -- Date12
 	'     ' & Mid(<Date1>, 10, 1)
 BuyTTC -- Echete TTC - даНет
 FID -- FID
-AddPrice -- Total ajouter
+NewPrice -- Nou Prix
 ClientID -- ClientID
+CamionPro -- Camion
+TVAPro -- +TVA
 
 === TRIGGER ===
 001/*После добавления, изменения, удаления записи*/
@@ -263,10 +265,11 @@ DateFacture -- Date Facture - датаИвремя
 	CurrentDate
 SellOnGround -- Vendre morale - текстовый
 	-D-!-
-	IIf(((<noVAT>=-1) AND (<Pmo2> = 'V')), 
+	IIf(<VATadd> <> -1, (IIf(((<noVAT>=-1) AND (<Pmo2> = 'V')), 
 		'Il ne sera delivre aucun document faisant ressortir le TVA (ART 297 du CGI).', 
 		(IIf(((<noVAT>=0) AND (<Pmo2> = 'V')), 
-			('Exoneration de TVA en vertu de  l article 262 ter I du CGI.'), NULL)))
+			('Exoneration de TVA en vertu de  l article 262 ter I du CGI.'), NULL)))), ' ')
+	
 noVAT -- non TVA - даНет
 VATadd -- +TVA - даНет
 WPrix -- WPrix - текстовый
@@ -328,12 +331,32 @@ TypeStr -- Type de Voie
 	-D-!-
 	SELECT StreetType FROM tblClient WHERE ID = <ClientID>
 AddTotal -- Total ajouter
+	-D-!-
+	IIf(<NewPrice> > 0, <NewPrice> - <TotalFac2>, 0)
 PostCode -- Postale
 	SELECT PostCode FROM tblClient
 		WHERE ID = <ClientID>
 WnoVAT -- .. - text
 	-D-!-
 	IIf(<noVAT>=-1, 'NON TVA', NULL)
+TotalFac2 -- Total2 - числовой
+	IIf(([Camion] = -1 OR [AddTotal] <> 0), 
+		(IIf(<VATadd> = -1, ((SELECT TotalTTC 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>) + <CamionPrice>), ((SELECT Total 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>) + <CamionPrice>))), 
+		(IIf(<VATadd> = -1, ((SELECT TotalTTC 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>)), ((SELECT Total 
+						FROM tblCarRUS 
+						WHERE ID = <VoitureID>)))))
+NewPrice -- Nou Prix
+FProforma -- Proforma
+WProforma -- ...
+	-D-!-
+	IIf(<FProforma>=-1, 'PROFORMA', NULL)
+
 
 === TRIGGER ===
 
@@ -542,16 +565,32 @@ Marque -- Marque - текстовый
 Modele -- Denomination - текстовый
 Vin -- N de derie - текстовый
 PriceCar -- preTotal - числовойДроб
+	-D-!-
+	IIf(<ProformaTVA> = -1, 
+		((SELECT TotalTTC FROM tblCarRUS WHERE ID = <CarID>) + <Totaladd>), 
+		(IIf(<ProformaCamion> = -1, ((SELECT Total FROM tblCarRUS WHERE ID = <CarID>) + (SELECT ValueInfo 
+		FROM tblInfo 
+		WHERE ID = 3) + <Totaladd>), ((SELECT Total FROM tblCarRUS WHERE ID = <CarID>) + <Totaladd>))))
 ProformaID -- ProformaID - числовой
 TotalExt -- TotalExt - числовойДроб
-	-
-	SELECT Total FROM tblCarRUS WHERE ID = <CarID>
+	-D-!-
+	<PriceCar>
+PreTotalExt -- PreTotalExt - числовойДроб
+	-D-!-
+	IIf(<ProformaTVA> = -1, 
+		(SELECT TotalTTC FROM tblCarRUS WHERE ID = <CarID>), 
+		(IIf(<ProformaCamion> = -1, ((SELECT Total FROM tblCarRUS WHERE ID = <CarID>) + (SELECT ValueInfo 
+		FROM tblInfo 
+		WHERE ID = 3)), (SELECT Total FROM tblCarRUS WHERE ID = <CarID>))))	
 ProformaNumber -- Proforma Numero - числовой
 	-
 	<tblProformaRUS>.<NumberProforma>
-AddPrice -- AddPrice
+ProformaTVA -- +TVA
+ProformaCamion -- +Camion
+NewTotal -- Nou Total
+Totaladd -- Totaladd
 	-D-!-
-	<PriceCar> - <TotalExt>
+	IIf(<NewTotal> > 0, <NewTotal> - <PreTotalExt>, 0)
 
 
 === TRIGGER ===
@@ -605,11 +644,11 @@ AddPrice -- AddPrice
 		(SELECT ValueInfo FROM tblInfo WHERE ID = 5), <CarID>, 0)
 026/*После добавления, изменения, удаления записи*/
 	UPDATE tblCarRUS
-		SET AddPrice = <AddPrice>, ClientID = (SELECT ClientID FROM tblProformaRUS WHERE ID = <ProformaID>)
+		SET NewPrice = <PriceCar>, ClientID = (SELECT ClientID FROM tblProformaRUS WHERE ID = <ProformaID>), CamionPro = <ProformaCamion>, TVAPro = <ProformaTVA>
 		WHERE ID = <tblProformaCarRUS>.<CarID>
 027/*При удалении записи*/
 	UPDATE tblCarRUS
-		SET AddPrice = 0,  ClientID = 0
+		SET NewPrice = 0,  ClientID = 0, CamionPro = 0, TVAPro = 0
 		WHERE ID = <tblProformaCarRUS>.<CarID>
 
 
