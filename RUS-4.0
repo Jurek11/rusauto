@@ -642,7 +642,7 @@ Totaladd -- Totaladd
 	VALUES('non Pret', 'Sarl RUS', <tblProformaRUS>.<DateProforma>, <Marque>, <Modele>, <Numero>, <Vin>, 
 		(SELECT Date1 FROM tblCarRUS WHERE ID = <CarID>), <PriceCar>, (SELECT noVAT FROM tblCarRUS WHERE ID = <CarID>), 0, 
 		(SELECT ValueInfo FROM tblInfo WHERE ID = 5), <CarID>, 0)
-026/*После добавления, изменения, удаления записи*/
+026/*При добавлении, изменении, удалении записи*/
 	UPDATE tblCarRUS
 		SET NewPrice = <PriceCar>, ClientID = (SELECT ClientID FROM tblProformaRUS WHERE ID = <ProformaID>), CamionPro = <ProformaCamion>, TVAPro = <ProformaTVA>
 		WHERE ID = <tblProformaCarRUS>.<CarID>
