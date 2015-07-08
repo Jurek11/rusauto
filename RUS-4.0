@@ -183,6 +183,7 @@ ClientID -- ClientID
 CamionPro -- Camion
 TVAPro -- +TVA
 AddTime - Date -- Poste le
+NoFraisAtt -- Att hors
 
 === TRIGGER ===
 001/*После добавления, изменения, удаления записи*/
@@ -458,6 +459,8 @@ CarID -- CarID - числовой
 NumberCar -- Immatricul. - текстовый
 BrandCar -- Marque - текстовый
 Amount -- Prix Fournis. - числовойДроб
+	-D-!-
+	IIf(<NoFraisAtt> = 0, (SELECT (Price + FraisVente) FROM tblCarRUS WHERE ID = <CarID>), (SELECT Price FROM tblCarRUS WHERE ID = <CarID>))
 AmountTVA -- Montant TVA - числовойДроб
 	-
 	<Amount> * 0.2
@@ -496,6 +499,7 @@ DateAuction2 -- DateAuction2 - текстовый
 Notes -- Note - текстовый
 AddVendor -- Ajouter nouveau Fournisseur
 AddTime - Date -- Poste le
+NoFraisAtt -- Att hors
 
 === TRIGGER ===
 
