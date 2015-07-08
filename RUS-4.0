@@ -54,6 +54,9 @@ Pass -- Passe - текстовый
 Commision -- Frais de vente - числовой
 PriceSite -- Prix site - текстовый
 BuyCars -- Total achat - числовой
+Email -- E-mail - текстовый
+TelePhone -- TelePhone - текстовый
+
 
 
 
