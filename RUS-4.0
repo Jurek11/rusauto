@@ -511,6 +511,11 @@ AddTime - Date -- Poste le
 015/*После добавления, изменения, удаления записи*/
 	<AddVendor> = -1
 	UPDATE tblAttestation SET AddVendor = 0 WHERE ID = <ID>
+/*button*/
+	UPDATE tblAttestation
+		SET Notes = 'annulation', Amount = 0, AmountTVA = 0
+		WHERE ID = <ID> 
+
 
 tblProformaRUS
 'ProformaRUS'
