@@ -57,7 +57,10 @@ BuyCars -- Total achat - числовой
 Email -- E-mail - текстовый
 TelePhone -- TelePhone - текстовый
 
-
+=== TRIGGER ===
+ma-01 /*При обновлении*/
+	UPDATE qdfMain SET BuyCars = (SELECT idCount FROM qdfCarRUSCount where vendor = qdfMain.vendor)
+		
 
 
 tblClient
@@ -183,6 +186,15 @@ TVAPro -- +TVA
 001/*После добавления, изменения, удаления записи*/
 	<BuyTTC> = -1 OR <noVAT> = -1
 	UPDATE tblCarRUS SET [Attestation] = -1 WHERE ID = <ID>
+
+qdfCarRUSCount
+'CarRUSCount'
+	
+	SELECT Vendor, COUNT(*) AS idCount FROM tblCarRUS GROUP BY Vendor
+
+Vendor -- Fournisseur 
+idCount -- idCount
+
 
 
 tblFactureRUS
