@@ -680,6 +680,23 @@ AddTime - Date -- Poste le
 		WHERE ID = <tblProformaCarRUS>.<CarID>
 
 
+
+qdfCars 
+'Stock VOITURES'
+
+SELECT 'RUS' as Stock, ID, Vendor, DateAchat, ProformaNum, Brand, Model, RegNumber, Vin, Date1, noVAT, Price, FraisVente, Total
+	FROM tblCarRUS
+	WHERE Sale = 0
+UNION
+SELECT 'TERO' as Stock, ID, Vendor, DateAchat, ProformaNum, Brand, Model, RegNumber, Vin, Date1, noVAT, Price, FraisVente, Total
+	FROM tblCarTERO
+	WHERE (Sale = 0 AND Status = 'Pret')
+UNION
+SELECT 'PATU' as Stock, ID, Vendor, DateAchat, ProformaNum, Brand, Model, RegNumber, Vin, Date1, noVAT, Price, FraisVente, Total
+	FROM tblCarPATU
+	WHERE (Sale = 0 AND Status = 'Pret')
+
+
 === template ===
 template - FACTURE
 '\\WDMYCLOUDRUS\Facture\' & [YearFac] & '\' & [MonthFac] & '-' & [NumFacture] & '#' & [RegNumber] & '-' & [Client] & '.docx'
