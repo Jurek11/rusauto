@@ -553,6 +553,8 @@ YearProforma -- Annee - числовой
 	Right(<DateProforma>, 4) 
 PostCode -- Postale - text
 AddTime - Date -- Poste le
+Bank -- Bank - text
+
 
 === TRIGGER ===
 016/* При удалении записи*/
