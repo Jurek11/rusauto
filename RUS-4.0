@@ -7,7 +7,7 @@ ID - int -- InfoID
 Company - text -- Entreprise 
 NameInfo - text -- Nom
 ValueInfo - real -- Valuer 
-
+AddTime - Date -- Poste le
 
 
 tblCountry
@@ -56,6 +56,7 @@ PriceSite -- Prix site - текстовый
 BuyCars -- Total achat - числовой
 Email -- E-mail - текстовый
 TelePhone -- TelePhone - текстовый
+AddTime - Date -- Poste le
 
 === TRIGGER ===
 ma-01 /*При обновлении*/
@@ -181,11 +182,14 @@ NewPrice -- Nou Prix
 ClientID -- ClientID
 CamionPro -- Camion
 TVAPro -- +TVA
+AddTime - Date -- Poste le
 
 === TRIGGER ===
 001/*После добавления, изменения, удаления записи*/
 	<BuyTTC> = -1 OR <noVAT> = -1
 	UPDATE tblCarRUS SET [Attestation] = -1 WHERE ID = <ID>
+
+
 
 qdfCarRUSCount
 'CarRUSCount'
@@ -371,7 +375,7 @@ FProforma -- Proforma
 WProforma -- ...
 	-D-!-
 	IIf(<FProforma>=-1, 'PROFORMA', NULL)
-
+AddTime - Date -- Poste le
 
 === TRIGGER ===
 
@@ -491,6 +495,7 @@ DateAuction2 -- DateAuction2 - текстовый
 	Left(<DateAuction>, 2) & '/' & Mid(<DateAuction>, 4, 2) & '/' & Right(<DateAuction>, 4)
 Notes -- Note - текстовый
 AddVendor -- Ajouter nouveau Fournisseur
+AddTime - Date -- Poste le
 
 === TRIGGER ===
 
@@ -547,6 +552,7 @@ YearProforma -- Annee - числовой
 	-
 	Right(<DateProforma>, 4) 
 PostCode -- Postale - text
+AddTime - Date -- Poste le
 
 === TRIGGER ===
 016/* При удалении записи*/
@@ -606,7 +612,7 @@ NewTotal -- Nou Total
 Totaladd -- Totaladd
 	-D-!-
 	IIf(<NewTotal> > 0, <NewTotal> - <PreTotalExt>, 0)
-
+AddTime - Date -- Poste le
 
 === TRIGGER ===
 019/*При добавлении, изменении, удалении записи*/
