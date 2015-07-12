@@ -61,6 +61,7 @@ Date1Year -- Date1Year
 	Right(<Date1>, 4)
 
 
+
 tblFacturePATU
 'FacturePATU'
 
@@ -174,6 +175,8 @@ TotalInLeft --! TotalInLeft
 	(SELECT NumPl FROM tblNumCountry WHERE Num = <TotalLeft>)
 TotalInRight --! TotalInRight
 	(SELECT NumPl FROM tblNumCountry WHERE Num = <TotalRight>)
+Reglement -- Reglement - текстовый
+
 
 000000 TRIGGER 000000
 
