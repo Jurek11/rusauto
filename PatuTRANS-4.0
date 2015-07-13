@@ -265,7 +265,7 @@ MonthProforma -- Mois - текстовый
 	Mid(<DateProforma>, 4, 2)
 DateProforma2 -- Date2 - текстовый
 	-
-	Right(<DateProforma>, 4) & '/' & Mid(<DateProforma>, 4, 2) & '/' & Left(<DateProforma>, 2)
+	Right(<DateProforma>, 4) & '-' & Mid(<DateProforma>, 4, 2) & '-' & Left(<DateProforma>, 2)
 YearProforma -- Annee - числовой
 	-
 	Right(<DateProforma>, 4) 
@@ -321,6 +321,8 @@ BrandModel -- BrandModel - текстовый
 	<Marque> & ' ' & <Modele>
 Qty -- Qty - числовой
 Wp -- Wp - текстовый
+YearCar -- Date1Year
+WVAT -- WVAT
 
 000000 TRIGGER 000000
 /*При добавлении, изменении, удалении записи*/
