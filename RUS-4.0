@@ -57,6 +57,8 @@ BuyCars -- Total achat - числовой
 Email -- E-mail - текстовый
 TelePhone -- TelePhone - текстовый
 AddTime - Date -- Poste le
+ForPerson -- Pour
+
 
 === TRIGGER ===
 ma-01 /*При обновлении*/
