@@ -713,12 +713,12 @@ tblPolice
 ID -- ID - числовой
 DateDoc -- Date
 	CurrentDate.
-IDPolice -- IDPolice
+PoliceID -- PoliceID
 	*list*
 	tblPoliceOffice.ID
 Police -- Police
 Avis -- Avis
-DatePost -- Date Poste
+DatePost -- Date Avis
 FactureID --  FactureID
 	*list*
 	tblFactureRUS.ID
