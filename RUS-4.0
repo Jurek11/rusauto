@@ -706,6 +706,42 @@ SELECT 'PATU' as Stock, ID, Vendor, DateAchat, ProformaNum, Brand, Model, RegNum
 	WHERE (Sale = 0 AND Status = 'Pret')
 
 
+
+tblPolice
+'Contravention'
+
+ID -- ID - числовой
+DateDoc -- Date
+	CurrentDate.
+IDPolice -- IDPolice
+	*list*
+	tblPoliceOffice.ID
+Police -- Police
+Avis -- Avis
+DatePost -- Date Poste
+FactureID --  FactureID
+	*list*
+	tblFactureRUS.ID
+ClientID -- ClientID
+Client -- Client
+RegNumber -- Immatricul.
+DateDeclar -- Date declaration
+Brand -- Marque
+CountyClient -- Pays client
+	-D-!-
+	SELECT Country FROM tblClient WHERE ID = <ClientID>
+DateFine --  Date infraction
+
+tblPoliceOffice
+'Police Office'
+
+ID -- ID - числовой
+CityPolice -- Commune
+Police -- Police
+
+
+
+
 === template ===
 template - FACTURE
 '\\WDMYCLOUDRUS\Facture\' & [YearFac] & '\' & [MonthFac] & '-' & [NumFacture] & '#' & [RegNumber] & '-' & [Client] & '.docx'
