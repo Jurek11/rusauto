@@ -186,6 +186,9 @@ CamionPro -- Camion
 TVAPro -- +TVA
 AddTime - Date -- Poste le
 NoFraisAtt -- Att hors
+Paid -- Paye
+
+
 
 === TRIGGER ===
 001/*После добавления, изменения, удаления записи*/
