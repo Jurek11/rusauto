@@ -108,7 +108,11 @@ AddTime -- Poste le - датаИвремя
 	CurrentDateTime
 NumVATLT -- NumVATLT
 	IIf(<NumberVAT> <> ' ', 'PVM kodas: '  & <PreVAT> & ' ' & <NumberVAT>)
-
+Passport -- N Passeport
+DateInvitation -- Date invitation
+ForYears -- Pour
+Date1 -- Date1
+Date2 -- Date2
 
 
 tblCarRUS
