@@ -59,7 +59,7 @@ CarRusID -- CarRusID
 Validate -- Valide
 Date1Year -- Date1Year
 	Right(<Date1>, 4)
-
+Reglement -- Reglement
 
 
 tblFacturePATU
