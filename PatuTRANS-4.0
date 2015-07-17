@@ -193,7 +193,7 @@ Reglement -- Reglement - текстовый
 				(SELECT City FROM tblClient WHERE ID = <ClientID>), 
 				(SELECT StreetType FROM tblClient WHERE ID = <ClientID>) & ' ' & 
 				(SELECT Address FROM tblClient WHERE ID = <ClientID>), 
-				(SELECT NumVATLT FROM tblClient WHERE ID = <ClientID>))
+				(SELECT (PreVAT & ' ' & NumberVAT) FROM tblClient WHERE ID = <ClientID>))
 /*При изменении записи*/
 	UPDATE tblFClientPATU
 	SET ClientIn = (SELECT Client FROM tblClient WHERE ID = <ClientID>), 
@@ -201,7 +201,7 @@ Reglement -- Reglement - текстовый
 		Commune = (SELECT City FROM tblClient WHERE ID = <ClientID>), 
 		Adresse = (SELECT StreetType FROM tblClient WHERE ID = <ClientID>) & ' ' & 
 				(SELECT Address FROM tblClient WHERE ID = <ClientID>), 
-		NumberVAT = (SELECT NumVATLT FROM tblClient WHERE ID = <ClientID>)
+		NumberVAT = (SELECT (PreVAT & ' ' & NumberVAT) FROM tblClient WHERE ID = <ClientID>)
 	WHERE FactureID = <ID>
 /*При изменении поля*/
 	VoitureID
