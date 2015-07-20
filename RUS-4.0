@@ -735,6 +735,9 @@ CountyClient -- Pays client
 	-D-!-
 	SELECT Country FROM tblClient WHERE ID = <ClientID>
 DateFine --  Date infraction
+TimeFine -- Time infraction
+HDeclar -- HH
+mDeclar -- mm
 
 tblPoliceOffice
 'Police Office'
